@@ -1,0 +1,45 @@
+name: Build PCF Solution
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install Power Platform CLI
+        run: dotnet tool install --global Microsoft.PowerApps.CLI.Tool
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build PCF
+        run: npm run build
+
+      - name: Create Solution
+        run: |
+          pac solution init --publisher-name Publisher --publisher-prefix pub --outputDirectory Solution
+          pac solution add-reference --path ./ --solutionPath Solution
+
+      - name: Build Solution
+        run: msbuild Solution/Solution.cdsproj /t:build /restore /p:Configuration=Release
+
+      - name: Upload Solution Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PowerApps-Solution
+          path: Solution/bin/Release/**/*.zip
+          if-no-files-found: warn

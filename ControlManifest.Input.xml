@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest>
+  <!--
+    Control: Bot Iframe (Website Channel)
+    Purpose: host the Copilot Studio Website channel securely via <iframe>.
+    Least-privilege: single text property (botUrl). No WebAPI usage.
+    Uses React for UI rendering.
+  -->
+  <control namespace="Company.Demo"
+           constructor="BotIframe"
+           version="1.0.0"
+           display-name-key="Bot Iframe (Website Channel)"
+           description-key="Embeds the Copilot Studio Website channel via an iframe; URL supplied at runtime."
+           control-type="virtual">
+
+    <!-- Single, bound input property for the Website channel URL -->
+    <property name="botUrl"
+              display-name-key="Bot URL"
+              description-key="The Website channel URL from Copilot Studio"
+              of-type="SingleLine.Text"
+              usage="bound"
+              required="true" />
+
+    <resources>
+      <code path="index.ts" order="1" />
+      <css path="styles.css" order="2" />
+      <platform-library name="React" version="16.8.6" />
+    </resources>
+
+    <feature-usage>
+      <uses-feature name="WebAPI" required="false" />
+    </feature-usage>
+  </control>
+</manifest>
